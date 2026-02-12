@@ -7,15 +7,15 @@ const portfolioData = {
         name: "Aman Ray",
         title: "Backend Developer & Creative Problem Solver",
         description: "I craft elegant digital experiences that combine beautiful design with powerful functionality. Specializing in modern web technologies and user-centered solutions.",
-        email: "contact@amanray.dev",
+    email: "amanray8422@gmail.com",
         phone: "+1 (437) 322-8422",
         location: "Niagara Falls, ON, Canada | Open to Remote Opportunities",
         avatar: "👨‍💻",
         social: {
-            github: "https://github.com/yourusername",
-            linkedin: "https://linkedin.com/in/yourusername",
+            github: "https://github.com/amanray22",
+            linkedin: "https://www.linkedin.com/in/amanray01/",
             twitter: "https://twitter.com/yourusername",
-            email: "mailto:contact@amanray.dev"
+            email: "mailto:amanray8422@gmail.com"
         }
     },
 
@@ -66,15 +66,6 @@ const portfolioData = {
             description: 'A full-stack application for managing veterinary library resources, including adding, updating and deleting records of Pets.',
             image: 'images/VetLibrary.png',
             tags: ['C#', 'SQL', 'UWP'],
-            link: '#',
-            github: '#'
-        },
-        {
-            id: 6,
-            title: 'Portfolio Generator',
-            description: 'AI-powered tool that creates personalized portfolio websites from user input.',
-            image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
-            tags: ['React', 'AI/ML', 'Tailwind'],
             link: '#',
             github: '#'
         }

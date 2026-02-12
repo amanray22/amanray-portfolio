@@ -1,6 +1,6 @@
 # Portfolio Website - HTML, CSS & JavaScript
 
-A modern, professional, and fully responsive portfolio website built with pure HTML, CSS, and JavaScript (no frameworks required).
+A modern, professional, and fully responsive portfolio website built with pure HTML, CSS, and JavaScript.
 
 ## 🌟 Features
 
@@ -23,12 +23,12 @@ portfolio-html/
 ├── css/
 │   ├── styles.css         # Main stylesheet
 │   └── animations.css     # Animation styles
-│
+│+
 ├── js/
 │   ├── data.js           # Portfolio data (projects, skills, etc.)
 │   └── main.js           # Main JavaScript functionality
 │
-└── images/               # Your images go here
+└── images/               # Images go here
     └── (add your images)
 ```
 
@@ -44,7 +44,6 @@ portfolio-html/
 3. **Customize your content**
    - Edit `js/data.js` to add your personal information
    - Update colors in `css/styles.css` (see CSS Variables section)
-   - Replace placeholder images with your own
 
 ## ⚙️ Customization Guide
 
@@ -55,16 +54,16 @@ Edit `js/data.js` to change:
 ```javascript
 const portfolioData = {
     personalInfo: {
-        name: "Your Name",
-        title: "Your Title",
-        email: "your@email.com",
+        name: " Name",
+        title: " Title",
+        email: "abcd@email.com",
         // ... more fields
     },
     projects: [
-        // Add your projects
+        // Add  projects
     ],
     skills: [
-        // Add your skills
+        // Add  skills
     ],
     // ... more sections
 };

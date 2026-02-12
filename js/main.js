@@ -244,9 +244,9 @@ const originalButtonText = submitButton.innerHTML;
 
 // Initialize EmailJS (you need to set up your EmailJS account)
 // EmailJS Configuration - Replace with your actual credentials
-const EMAILJS_SERVICE_ID = 'service_YOUR_SERVICE_ID';
-const EMAILJS_TEMPLATE_ID = 'template_YOUR_TEMPLATE_ID';
-const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID = 'service_zptdqnp';
+const EMAILJS_TEMPLATE_ID = 'template_6i3v6op';
+const EMAILJS_PUBLIC_KEY = 'OcsOn2JJaShzBThzl';
 
 contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -291,24 +291,46 @@ contactForm.addEventListener('submit', async (e) => {
             formData.append('message', message);
             formData.append('_captcha', 'false');
             formData.append('_next', window.location.href);
-            
-            const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+
+            const response = await fetch('https://formspree.io/f/xpqjqekp', {
                 method: 'POST',
+                // Ask Formspree to return JSON instead of redirecting to /thanks
+                // This avoids the browser following a cross-origin redirect that
+                // doesn't include CORS headers (which causes the "No 'Access-Control-Allow-Origin' header" error).
+                headers: {
+                    'Accept': 'application/json'
+                },
                 body: formData
             });
-            
+
             if (response.ok) {
                 showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
             } else {
-                throw new Error('Failed to send message');
+                // Capture response body for easier debugging (Formspree often returns helpful JSON)
+                let respText = '';
+                try {
+                    respText = await response.text();
+                } catch (e) {
+                    respText = '<unable to read response body>';
+                }
+                const err = new Error(`Formspree error: ${response.status} ${response.statusText} - ${respText}`);
+                // Attach response info to the error for the catch block
+                err.response = { status: response.status, statusText: response.statusText, body: respText };
+                throw err;
             }
         }
         
         // Reset form
         contactForm.reset();
     } catch (error) {
+        // Log detailed error information to the console to help debugging
         console.error('Form submission error:', error);
-        showNotification('Failed to send message. Please try again or email me directly.', 'error');
+        if (error && error.response) {
+            console.error('Response details:', error.response);
+        }
+
+        // Show a slightly more informative notification while keeping the message user-friendly
+        showNotification('Failed to send message. Check the console for details or email me directly at amanray8422@gmail.com', 'error');
     } finally {
         // Re-enable button and restore original text
         submitButton.disabled = false;
