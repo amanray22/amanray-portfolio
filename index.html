@@ -292,3 +292,64 @@
     <script src="js/main.js"></script>
 </body>
 </html>
+
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>Download Resume</title>
+	<style>
+		body { font-family: system-ui, Arial, sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; background:#f6f8fa; }
+		.container { text-align:center; background:#fff; padding:28px; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+		button, a.button { display:inline-block; padding:10px 18px; margin-top:12px; background:#0366d6; color:white; border:none; border-radius:6px; text-decoration:none; font-weight:600; cursor:pointer; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>My Resume</h1>
+		<p>Click the button below to download the resume PDF.</p>
+
+		<!-- Update the href if you use a different filename or subfolder -->
+		<a id="dlLink" class="button" href="resume.pdf" download="resume.pdf">Download Resume</a>
+
+		<!-- Fallback: fetch and force download if browser ignores download attribute -->
+		<button id="dlFallback" style="display:none">Download (Fallback)</button>
+	</div>
+
+	<script>
+		// If the browser blocks the download attribute (some cross-origin cases),
+		// try fetching the file and creating a blob to force download.
+		(async function () {
+			const link = document.getElementById('dlLink');
+			const fallbackBtn = document.getElementById('dlFallback');
+
+			// Test whether the download attribute seems to work by creating a temporary anchor
+			const test = document.createElement('a');
+			test.href = link.href;
+			const supportsDownload = 'download' in test;
+			if (!supportsDownload) {
+				fallbackBtn.style.display = 'inline-block';
+			}
+
+			fallbackBtn.addEventListener('click', async () => {
+				try {
+					const resp = await fetch(link.href, { mode: 'cors' });
+					if (!resp.ok) throw new Error('Network response was not ok');
+					const blob = await resp.blob();
+					const blobUrl = URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.href = blobUrl;
+					a.download = 'resume.pdf'; // change if needed
+					document.body.appendChild(a);
+					a.click();
+					a.remove();
+					URL.revokeObjectURL(blobUrl);
+				} catch (err) {
+					alert('Could not download resume: ' + err.message);
+				}
+			});
+		})();
+	</script>
+</body>
+</html>
