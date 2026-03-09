@@ -68,6 +68,15 @@ const portfolioData = {
             tags: ['C#', 'SQL', 'UWP'],
             link: 'https://github.com/amanray22/vet-library.git',
             github: 'https://github.com/amanray22/vet-library.git'
+        },
+        {
+            id: 6,
+            title: 'React TODO List Application',
+            description: 'A Simple application for managing tasks with features like adding, updating, and deleting tasks.',
+            image: 'images/React.png',
+            tags: ['React', 'Node.js',  'JavaScript', 'HTML', 'CSS'],
+            link: 'https://github.com/amanray22/task-manager.git',
+            github: 'https://github.com/amanray22/task-manager.git'
         }
     ],
 
