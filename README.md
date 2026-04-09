@@ -1,273 +1,113 @@
-# Portfolio Website - HTML, CSS & JavaScript
+# Aman Ray Portfolio
 
-A modern, professional, and fully responsive portfolio website built with pure HTML, CSS, and JavaScript.
+Professional portfolio website built with HTML, CSS, and vanilla JavaScript.
 
-## 🌟 Features
+## Overview
 
-- ✨ **Pure Vanilla JavaScript** - No frameworks or libraries needed
-- 🎨 **Modern Design** - Clean, professional, and visually stunning
-- 📱 **Fully Responsive** - Works perfectly on all devices
-- ⚡ **Fast Performance** - Optimized for speed and efficiency
-- 🎭 **Smooth Animations** - Custom CSS animations and transitions
-- 🎯 **SEO Optimized** - Proper meta tags and semantic HTML
-- ♿ **Accessible** - WCAG compliant and keyboard navigable
-- 🔧 **Easy to Customize** - All data in one file
+This site is designed for recruiter and hiring-manager readability:
 
-## 📁 File Structure
+- clear role positioning as an aspiring software developer
+- outcome-focused project cards
+- short experience highlights section
+- secure external links
+- responsive layout and theme toggle
+- contact form with validation and fallback delivery
 
+## Current stack
+
+- HTML5
+- CSS3 (`styles.css`, `animations.css`)
+- Vanilla JavaScript (`data.js`, `main.js`)
+- Email delivery via EmailJS (optional config) with Formspree fallback
+
+## Project structure
+
+```text
+.
+├── index.html
+├── css
+│   ├── styles.css
+│   └── animations.css
+├── js
+│   ├── data.js
+│   └── main.js
+└── resume.pdf (optional, recommended)
 ```
-portfolio-html/
-│
-├── index.html              # Main HTML file
-│
-├── css/
-│   ├── styles.css         # Main stylesheet
-│   └── animations.css     # Animation styles
-│+
-├── js/
-│   ├── data.js           # Portfolio data (projects, skills, etc.)
-│   └── main.js           # Main JavaScript functionality
-│
-└── images/               # Images go here
-    └── (add your images)
-```
 
-## 🚀 Quick Start
+## Main sections on the website
 
-1. **Download the files**
-   - Extract the ZIP file to your desired location
+- Navigation
+- Hero
+- Experience Highlights
+- Featured Projects
+- About
+- Services
+- Blog
+- Contact
+- Footer
 
-2. **Open the website**
-   - Simply open `index.html` in your web browser
-   - No installation or build process required!
+## How content is managed
 
-3. **Customize your content**
-   - Edit `js/data.js` to add your personal information
-   - Update colors in `css/styles.css` (see CSS Variables section)
+Edit `js/data.js` to update:
 
-## ⚙️ Customization Guide
+- personal info
+- project entries (including `category`, `featured`, `outcome`, `year`)
+- skills
+- services
+- blog posts
 
-### Update Personal Information
+## Contact form behavior
 
-Edit `js/data.js` to change:
+The form in `index.html` uses validation and two send paths:
+
+1. EmailJS if `window.EMAILJS_CONFIG` is present and valid
+2. Formspree fallback if EmailJS is not configured
+
+Expected EmailJS object:
 
 ```javascript
-const portfolioData = {
-    personalInfo: {
-        name: " Name",
-        title: " Title",
-        email: "abcd@email.com",
-        // ... more fields
-    },
-    projects: [
-        // Add  projects
-    ],
-    skills: [
-        // Add  skills
-    ],
-    // ... more sections
+window.EMAILJS_CONFIG = {
+  serviceId: "your_service_id",
+  templateId: "your_template_id",
+  publicKey: "your_public_key"
 };
 ```
 
-### Change Colors & Theme
+## Run locally
 
-Edit CSS variables in `css/styles.css`:
+No build step is required.
 
-```css
-:root {
-    --primary: #2563eb;        /* Main blue color */
-    --secondary: #9333ea;      /* Purple accent */
-    --text-primary: #111827;   /* Main text color */
-    /* ... more variables */
-}
+1. Open `index.html` directly in a browser, or
+2. Use any static server for cleaner local testing
+
+Example:
+
+```bash
+npx serve .
 ```
 
-### Add Your Images
+## Deployment
 
-1. Place your images in the `images/` folder
-2. Update image paths in `js/data.js`:
+This project can be deployed as static files on:
 
-```javascript
-projects: [
-    {
-        image: 'images/your-project.jpg',
-        // ... other fields
-    }
-]
-```
+- GitHub Pages
+- Netlify
+- Vercel (static)
+- Any traditional static host
 
-### Modify Sections
+## Quality checklist
 
-You can easily add or remove sections by:
-1. Editing the HTML in `index.html`
-2. Adding corresponding styles in `css/styles.css`
-3. Adding functionality in `js/main.js` if needed
+- verify all project links and resume link
+- verify contact form success and failure messages
+- test mobile menu and responsive layout
+- confirm dark/light theme toggle
+- confirm no console errors in browser
 
-## 📝 Sections Included
+## Notes
 
-1. **Navigation** - Fixed header with smooth scroll
-2. **Hero** - Eye-catching landing section
-3. **Portfolio** - Project showcase grid
-4. **About** - Bio and skills section
-5. **Services** - Services offered
-6. **Blog** - Latest blog posts/articles
-7. **Contact** - Contact form
-8. **Footer** - Footer with links and info
+- The site currently uses hosted image URLs for project cards.
+- A fallback image is applied if a project image fails to load.
 
-## 🎨 Customization Examples
+## License
 
-### Change Gradient Colors
-
-```css
-.gradient-text {
-    background: linear-gradient(to right, #your-color-1, #your-color-2);
-}
-```
-
-### Add a New Section
-
-1. Add HTML:
-```html
-<section id="new-section" class="new-section">
-    <div class="container">
-        <h2>New Section</h2>
-        <!-- Your content -->
-    </div>
-</section>
-```
-
-2. Add CSS:
-```css
-.new-section {
-    padding: var(--spacing-3xl) 0;
-    background: var(--bg-white);
-}
-```
-
-3. Add to navigation:
-```html
-<a href="#new-section" class="nav-link">New Section</a>
-```
-
-## 🌐 Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Opera (latest)
-
-## 📱 Responsive Breakpoints
-
-- Desktop: > 1024px
-- Tablet: 768px - 1024px
-- Mobile: < 768px
-
-## ⚡ Performance Tips
-
-1. **Optimize Images**
-   - Use WebP format when possible
-   - Compress images before uploading
-   - Use appropriate image sizes
-
-2. **Minimize Files**
-   - Minify CSS and JS for production
-   - Remove unused code
-
-3. **Enable Caching**
-   - Set proper cache headers on your server
-
-## 🔧 Advanced Features
-
-The JavaScript includes optional features you can enable:
-
-```javascript
-// In js/main.js, uncomment these lines:
-
-// Page load animation
-// initPageLoad();
-
-// Parallax scrolling effect
-// initParallax();
-
-// Custom cursor
-// initCustomCursor();
-```
-
-## 📧 Contact Form Setup
-
-The contact form currently shows an alert. To make it functional:
-
-1. **Use a form service** like:
-   - Formspree
-   - Netlify Forms
-   - EmailJS
-
-2. **Or add backend code** to handle form submissions
-
-Example with Formspree:
-```html
-<form action="https://formspree.io/f/your-form-id" method="POST">
-```
-
-## 🚀 Deployment
-
-### Option 1: GitHub Pages
-1. Create a GitHub repository
-2. Upload all files
-3. Enable GitHub Pages in settings
-4. Your site will be live at `username.github.io/repo-name`
-
-### Option 2: Netlify
-1. Drag and drop the folder to Netlify
-2. Your site is live instantly!
-
-### Option 3: Traditional Hosting
-1. Upload files via FTP to your web host
-2. Ensure `index.html` is in the root directory
-
-## 🎯 SEO Optimization
-
-The template includes:
-- Meta tags for SEO
-- Open Graph tags for social sharing
-- Semantic HTML5 elements
-- Proper heading hierarchy
-
-To improve SEO further:
-1. Add your own meta descriptions
-2. Create a `sitemap.xml`
-3. Add `robots.txt`
-4. Optimize image alt texts
-
-## ✅ Checklist Before Going Live
-
-- [ ] Update all personal information in `js/data.js`
-- [ ] Replace placeholder images
-- [ ] Update social media links
-- [ ] Test on multiple devices
-- [ ] Check all links work
-- [ ] Optimize images
-- [ ] Update meta tags and SEO info
-- [ ] Set up contact form
-- [ ] Test contact form
-- [ ] Add Google Analytics (optional)
-
-## 📄 License
-
-Free to use for personal and commercial projects.
-
-## 🤝 Support
-
-If you have questions or need help:
-- Check the code comments
-- Review the customization examples
-- Refer to the file structure
-
-## 🎉 Credits
-
-Built with ❤️ using pure HTML, CSS, and JavaScript.
-
----
-
-**Happy Coding! 🚀**
+Free to use for personal portfolio work.
