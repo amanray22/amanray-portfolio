@@ -1,6 +1,4 @@
-// ===========================
-// NAVIGATION
-// ===========================
+// Navigation
 
 // Navbar scroll effect
 const navbar = document.getElementById('navbar');
@@ -8,19 +6,23 @@ const mobileToggle = document.getElementById('mobileToggle');
 const navMenu = document.getElementById('navMenu');
 const navLinks = document.querySelectorAll('.nav-link');
 
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-});
+if (navbar) {
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+}
 
 // Mobile menu toggle
-mobileToggle.addEventListener('click', () => {
-    mobileToggle.classList.toggle('active');
-    navMenu.classList.toggle('active');
-});
+if (mobileToggle && navMenu) {
+    mobileToggle.addEventListener('click', () => {
+        mobileToggle.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+}
 
 // Smooth scroll and active link
 navLinks.forEach(link => {
@@ -51,7 +53,6 @@ window.addEventListener('scroll', () => {
     
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
         
         if (window.scrollY >= sectionTop - 200) {
             current = section.getAttribute('id');
@@ -66,36 +67,88 @@ window.addEventListener('scroll', () => {
     });
 });
 
-// ===========================
-// DYNAMIC CONTENT RENDERING
-// ===========================
+// Dynamic content rendering
+
+// I sanitize text before injecting HTML so project data never breaks layout.
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
 
 // Render Projects
 function renderProjects() {
     const portfolioGrid = document.getElementById('portfolioGrid');
-    
-    portfolioData.projects.forEach((project, index) => {
+    if (!portfolioGrid) {
+        console.warn('Portfolio grid container (#portfolioGrid) not found.');
+        return;
+    }
+
+    if (typeof portfolioData === 'undefined') {
+        console.error('portfolioData is undefined. Ensure js/data.js loads before js/main.js.');
+        return;
+    }
+
+    if (!Array.isArray(portfolioData.projects)) {
+        console.error('portfolioData.projects is missing or not an array.');
+        return;
+    }
+
+    const projects = [...portfolioData.projects].sort((a, b) => Number(b.featured) - Number(a.featured));
+    portfolioGrid.innerHTML = '';
+
+    projects.forEach((project) => {
+        if (!project || !project.title || !project.link) {
+            console.warn('Skipping invalid project entry:', project);
+            return;
+        }
+
+        const tags = Array.isArray(project.tags) ? project.tags : [];
+        const safeTitle = escapeHtml(project.title);
+        const safeDescription = escapeHtml(project.description);
+        const safeOutcome = escapeHtml(project.outcome);
+        const safeCategory = escapeHtml(project.category || 'General');
+        const safeYear = escapeHtml(project.year || '');
+        const safeImage = escapeHtml(project.image || '');
+        const safeLink = escapeHtml(project.link || '#');
+        const safeGithub = escapeHtml(project.github || '');
+        const fallbackImage = 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=800&fit=crop';
         const projectCard = document.createElement('div');
         projectCard.className = 'project-card stagger-item';
         projectCard.innerHTML = `
             <div class="project-image">
-                <img src="${project.image}" alt="${project.title}" loading="lazy">
+                <img src="${safeImage}" alt="${safeTitle}" loading="lazy" onerror="this.onerror=null;this.src='${fallbackImage}'">
                 <div class="project-overlay"></div>
             </div>
             <div class="project-content">
-                <h3 class="project-title">${project.title}</h3>
-                <p class="project-description">${project.description}</p>
-                <div class="project-tags">
-                    ${project.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                <div class="project-meta">
+                    ${project.featured ? '<span class="project-badge project-badge-featured">Featured</span>' : ''}
+                    <span class="project-badge">${safeCategory}</span>
+                    <span class="project-year">${safeYear}</span>
                 </div>
-                <a href="${project.link}" class="project-link">
-                    View Project
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                    </svg>
-                </a>
+                <h3 class="project-title">${safeTitle}</h3>
+                <p class="project-description">${safeDescription}</p>
+                ${project.outcome ? `<p class="project-outcome">${safeOutcome}</p>` : ''}
+                <div class="project-tags">
+                    ${tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
+                </div>
+                <div class="project-links">
+                    <a href="${safeLink}" class="project-link" target="_blank" rel="noopener noreferrer">
+                        Live Demo
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                    </a>
+                    ${project.github && project.github !== '#' ? `
+                    <a href="${safeGithub}" class="project-link project-link-secondary" target="_blank" rel="noopener noreferrer">
+                        Source Code
+                    </a>` : ''}
+                </div>
             </div>
         `;
         portfolioGrid.appendChild(projectCard);
@@ -105,13 +158,14 @@ function renderProjects() {
 // Render Skills
 function renderSkills() {
     const skillsList = document.getElementById('skillsList');
+    if (!skillsList || typeof portfolioData === 'undefined' || !Array.isArray(portfolioData.skills)) return;
     
     portfolioData.skills.forEach(skill => {
         const skillItem = document.createElement('div');
         skillItem.className = 'skill-item';
         skillItem.innerHTML = `
             <div class="skill-header">
-                <span class="skill-name">${skill.name}</span>
+                <span class="skill-name">${escapeHtml(skill.name)}</span>
                 <span class="skill-level">${skill.level}%</span>
             </div>
             <div class="skill-bar">
@@ -128,14 +182,15 @@ function renderSkills() {
 // Render Services
 function renderServices() {
     const servicesGrid = document.getElementById('servicesGrid');
+    if (!servicesGrid || typeof portfolioData === 'undefined' || !Array.isArray(portfolioData.services)) return;
     
-    portfolioData.services.forEach((service, index) => {
+    portfolioData.services.forEach((service) => {
         const serviceCard = document.createElement('div');
         serviceCard.className = 'service-card stagger-item';
         serviceCard.innerHTML = `
-            <div class="service-icon">${service.icon}</div>
-            <h3 class="service-title">${service.title}</h3>
-            <p class="service-description">${service.description}</p>
+            <div class="service-icon">${escapeHtml(service.icon)}</div>
+            <h3 class="service-title">${escapeHtml(service.title)}</h3>
+            <p class="service-description">${escapeHtml(service.description)}</p>
         `;
         servicesGrid.appendChild(serviceCard);
     });
@@ -144,20 +199,21 @@ function renderServices() {
 // Render Blog Posts
 function renderBlogPosts() {
     const blogGrid = document.getElementById('blogGrid');
+    if (!blogGrid || typeof portfolioData === 'undefined' || !Array.isArray(portfolioData.blogPosts)) return;
     
-    portfolioData.blogPosts.forEach((post, index) => {
+    portfolioData.blogPosts.forEach((post) => {
         const blogCard = document.createElement('div');
         blogCard.className = 'blog-card stagger-item';
         blogCard.innerHTML = `
             <div class="blog-content">
                 <div class="blog-meta">
-                    <span>${post.date}</span>
+                    <span>${escapeHtml(post.date)}</span>
                     <span>•</span>
-                    <span>${post.readTime}</span>
+                    <span>${escapeHtml(post.readTime)}</span>
                 </div>
-                <h3 class="blog-title">${post.title}</h3>
-                <p class="blog-excerpt">${post.excerpt}</p>
-                <a href="${post.link}" class="blog-link">
+                <h3 class="blog-title">${escapeHtml(post.title)}</h3>
+                <p class="blog-excerpt">${escapeHtml(post.excerpt)}</p>
+                <a href="${escapeHtml(post.link)}" class="blog-link" target="_blank" rel="noopener noreferrer">
                     Read More
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -171,9 +227,7 @@ function renderBlogPosts() {
     });
 }
 
-// ===========================
-// ANIMATIONS
-// ===========================
+// Animations
 
 // Animate skill bars when in viewport
 function animateSkillBars() {
@@ -216,75 +270,110 @@ function setupStaggerAnimation() {
     });
 }
 
-// Reveal animation on scroll
-function setupRevealAnimation() {
-    const reveals = document.querySelectorAll('.reveal');
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.15 });
-    
-    reveals.forEach(reveal => {
-        observer.observe(reveal);
-    });
-}
-
-// ===========================
-// CONTACT FORM
-// ===========================
+// Contact form
 
 const contactForm = document.getElementById('contactForm');
-const submitButton = contactForm.querySelector('.btn-submit');
-const originalButtonText = submitButton.innerHTML;
+const submitButton = contactForm ? contactForm.querySelector('.btn-submit') : null;
+const originalButtonText = submitButton ? submitButton.innerHTML : '';
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Initialize EmailJS (you need to set up your EmailJS account)
-// EmailJS Configuration - Replace with your actual credentials
-const EMAILJS_SERVICE_ID = 'service_zptdqnp';
-const EMAILJS_TEMPLATE_ID = 'template_6i3v6op';
-const EMAILJS_PUBLIC_KEY = 'OcsOn2JJaShzBThzl';
+const EMAILJS_CONFIG = window.EMAILJS_CONFIG || null;
 
+function setFieldState(field, message = '', state = '') {
+    const formGroup = field.closest('.form-group');
+    const feedback = formGroup ? formGroup.querySelector('.field-feedback') : null;
+
+    if (formGroup) {
+        formGroup.classList.remove('field-valid', 'field-error');
+        if (state === 'valid') formGroup.classList.add('field-valid');
+        if (state === 'error') formGroup.classList.add('field-error');
+    }
+
+    if (feedback) {
+        feedback.textContent = message;
+    }
+}
+
+function validateField(field) {
+    const value = field.value.trim();
+    if (!value) {
+        setFieldState(field, 'This field is required.', 'error');
+        return false;
+    }
+
+    if (field.id === 'email' && !emailRegex.test(value)) {
+        setFieldState(field, 'Enter a valid email address.', 'error');
+        return false;
+    }
+
+    if (field.id === 'message' && value.length < 15) {
+        setFieldState(field, 'Please add at least 15 characters.', 'error');
+        return false;
+    }
+
+    setFieldState(field, 'Looks good.', 'valid');
+    return true;
+}
+
+['name', 'email', 'message'].forEach((id) => {
+    const field = document.getElementById(id);
+    if (!field) return;
+    field.addEventListener('blur', () => validateField(field));
+    field.addEventListener('input', () => {
+        if (field.value.trim()) validateField(field);
+    });
+});
+
+if (contactForm && submitButton) {
 contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const message = document.getElementById('message').value.trim();
-    
-    // Validation
-    if (!name || !email || !message) {
-        showNotification('Please fill in all fields', 'error');
+    const nameField = document.getElementById('name');
+    const emailField = document.getElementById('email');
+    const messageField = document.getElementById('message');
+    if (!nameField || !emailField || !messageField) {
+        showNotification('Form fields are unavailable. Please refresh and try again.', 'error');
         return;
     }
-    
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        showNotification('Please enter a valid email address', 'error');
+    const allValid = [nameField, emailField, messageField].every(validateField);
+
+    if (!allValid) {
+        showNotification('Please correct the highlighted fields and try again.', 'error');
         return;
     }
+
+    const name = nameField.value.trim();
+    const email = emailField.value.trim();
+    const message = messageField.value.trim();
     
     // Disable button and show loading state
     submitButton.disabled = true;
     submitButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="1"></circle><path d="M12 5v14"></path></svg> Sending...';
     
     try {
-        // Method 1: Using EmailJS (Recommended)
-        if (typeof emailjs !== 'undefined') {
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        const canUseEmailJS = (
+            typeof emailjs !== 'undefined' &&
+            EMAILJS_CONFIG &&
+            EMAILJS_CONFIG.serviceId &&
+            EMAILJS_CONFIG.templateId &&
+            EMAILJS_CONFIG.publicKey
+        );
+
+        if (canUseEmailJS) {
+            await emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, {
                 from_name: name,
                 from_email: email,
                 message: message,
                 reply_to: email
-            }, EMAILJS_PUBLIC_KEY);
+            }, EMAILJS_CONFIG.publicKey);
             
             showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
         } else {
-            // Method 2: Using FormSubmit (No setup required, free backend)
+            // I keep Formspree as a reliable backup if EmailJS is not configured.
+            if (typeof emailjs !== 'undefined' && !canUseEmailJS) {
+                console.warn('EmailJS SDK loaded but EMAILJS_CONFIG is missing/invalid. Falling back to Formspree.');
+            }
+
             const formData = new FormData();
             formData.append('name', name);
             formData.append('email', email);
@@ -294,9 +383,6 @@ contactForm.addEventListener('submit', async (e) => {
 
             const response = await fetch('https://formspree.io/f/xpqjqekp', {
                 method: 'POST',
-                // Ask Formspree to return JSON instead of redirecting to /thanks
-                // This avoids the browser following a cross-origin redirect that
-                // doesn't include CORS headers (which causes the "No 'Access-Control-Allow-Origin' header" error).
                 headers: {
                     'Accept': 'application/json'
                 },
@@ -306,7 +392,6 @@ contactForm.addEventListener('submit', async (e) => {
             if (response.ok) {
                 showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
             } else {
-                // Capture response body for easier debugging (Formspree often returns helpful JSON)
                 let respText = '';
                 try {
                     respText = await response.text();
@@ -314,29 +399,26 @@ contactForm.addEventListener('submit', async (e) => {
                     respText = '<unable to read response body>';
                 }
                 const err = new Error(`Formspree error: ${response.status} ${response.statusText} - ${respText}`);
-                // Attach response info to the error for the catch block
                 err.response = { status: response.status, statusText: response.statusText, body: respText };
                 throw err;
             }
         }
         
-        // Reset form
         contactForm.reset();
+        [nameField, emailField, messageField].forEach((field) => setFieldState(field, '', ''));
     } catch (error) {
-        // Log detailed error information to the console to help debugging
         console.error('Form submission error:', error);
         if (error && error.response) {
             console.error('Response details:', error.response);
         }
 
-        // Show a slightly more informative notification while keeping the message user-friendly
         showNotification('Failed to send message. Check the console for details or email me directly at amanray8422@gmail.com', 'error');
     } finally {
-        // Re-enable button and restore original text
         submitButton.disabled = false;
         submitButton.innerHTML = originalButtonText;
     }
 });
+}
 
 // Notification function
 function showNotification(message, type = 'success') {
@@ -418,9 +500,7 @@ function showNotification(message, type = 'success') {
     }
 })();
 
-// ===========================
-// UTILITY FUNCTIONS
-// ===========================
+// Utility functions
 
 // Update current year in footer
 function updateCurrentYear() {
@@ -482,131 +562,30 @@ function addScrollToTopButton() {
     });
 }
 
-// ===========================
-// PAGE LOADING ANIMATION
-// ===========================
-
-function initPageLoad() {
-    // Add fade-in effect to sections
-    const sections = document.querySelectorAll('section');
-    sections.forEach((section, index) => {
-        section.style.opacity = '0';
-        section.style.transform = 'translateY(30px)';
-        section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        
-        setTimeout(() => {
-            section.style.opacity = '1';
-            section.style.transform = 'translateY(0)';
-        }, index * 100);
-    });
-}
-
-// ===========================
-// TYPING EFFECT (Optional)
-// ===========================
-
-function typeWriter(element, text, speed = 50) {
-    let i = 0;
-    element.textContent = '';
-    
-    function type() {
-        if (i < text.length) {
-            element.textContent += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        }
-    }
-    
-    type();
-}
-
-// ===========================
-// PARALLAX EFFECT (Optional)
-// ===========================
-
-function initParallax() {
-    window.addEventListener('scroll', () => {
-        const scrolled = window.scrollY;
-        const parallaxElements = document.querySelectorAll('.parallax');
-        
-        parallaxElements.forEach(element => {
-            const speed = element.dataset.speed || 0.5;
-            element.style.transform = `translateY(${scrolled * speed}px)`;
-        });
-    });
-}
-
-// ===========================
-// MOUSE CURSOR EFFECT (Optional)
-// ===========================
-
-function initCustomCursor() {
-    const cursor = document.createElement('div');
-    cursor.className = 'custom-cursor';
-    cursor.style.cssText = `
-        width: 20px;
-        height: 20px;
-        border: 2px solid #2563eb;
-        border-radius: 50%;
-        position: fixed;
-        pointer-events: none;
-        z-index: 9999;
-        transition: transform 0.2s ease;
-        display: none;
-    `;
-    document.body.appendChild(cursor);
-    
-    document.addEventListener('mousemove', (e) => {
-        cursor.style.display = 'block';
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
-    });
-    
-    document.addEventListener('mousedown', () => {
-        cursor.style.transform = 'scale(0.8)';
-    });
-    
-    document.addEventListener('mouseup', () => {
-        cursor.style.transform = 'scale(1)';
-    });
-}
-
-// ===========================
-// INITIALIZATION
-// ===========================
+// Initialization
 
 document.addEventListener('DOMContentLoaded', () => {
     // Render all content
-    renderProjects();
-    renderSkills();
-    renderServices();
-    renderBlogPosts();
+    try {
+        renderProjects();
+        renderSkills();
+        renderServices();
+        renderBlogPosts();
+    } catch (error) {
+        console.error('Rendering failed during initialization:', error);
+    }
     
     // Setup animations
     setupStaggerAnimation();
-    setupRevealAnimation();
-    
     // Update footer year
     updateCurrentYear();
     
     // Add scroll to top button
     addScrollToTopButton();
-    
-    // Optional: Page load animation
-    // initPageLoad();
-    
-    // Optional: Parallax effect
-    // initParallax();
-    
-    // Optional: Custom cursor
-    // initCustomCursor();
-    
     console.log('Portfolio website loaded successfully! 🚀');
 });
 
-// ===========================
-// PERFORMANCE OPTIMIZATION
-// ===========================
+// Performance optimization
 
 // Lazy load images
 if ('IntersectionObserver' in window) {
@@ -625,34 +604,3 @@ if ('IntersectionObserver' in window) {
     images.forEach(img => imageObserver.observe(img));
 }
 
-// Debounce function for scroll events
-function debounce(func, wait = 10) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Throttle function for performance
-function throttle(func, limit = 100) {
-    let inThrottle;
-    return function(...args) {
-        if (!inThrottle) {
-            func.apply(this, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    };
-}
-
-// Use throttle for scroll events
-const handleScroll = throttle(() => {
-    // Your scroll handler code here
-}, 100);
-
-window.addEventListener('scroll', handleScroll);
